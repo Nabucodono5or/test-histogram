@@ -7,7 +7,7 @@ import { max } from "d3";
 
 let width = 500;
 let height = 500;
-let margin = { top: 10, left: 20, right: 10, bottom: 10 };
+let margin = { top: 10, left: 30, right: 10, bottom: 10 };
 
 csv(require("./data/Video_Games_Sales_as_at_22_Dec_2016.csv")).then((data) => {
   data.map((d) => (d.Year_of_Release = +d.Year_of_Release));
@@ -49,8 +49,8 @@ function render(incomingData) {
   console.log(bins);
 
   let y = scaleLinear()
-    .domain([0, max(bins, (d) => d.length)])
-    .range([innerHeight, 0]);
+    .domain([max(bins, (d) => d.length), 0])
+    .range([0, innerHeight]);
 
   let yAxis = axisLeft(y);
 
@@ -60,5 +60,13 @@ function render(incomingData) {
     .attr("transform", `translate(${margin.left}, ${-margin.bottom})`)
     .call(yAxis);
 
-  
+  g.selectAll("rect")
+    .data(bins)
+    .enter()
+    .append("rect")
+    .attr("y", (d) => y(d.length))
+    .attr("x", (d) => x(d.x0))
+    .attr("height", (d) => innerHeight - margin.bottom - y(d.length))
+    .attr("width", 10)
+    .style("fill", "#e63946");
 }
