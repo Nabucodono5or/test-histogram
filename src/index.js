@@ -39,17 +39,15 @@ function render(incomingData) {
     .attr("transform", `translate(${0}, ${innerHeight - margin.bottom})`)
     .call(xAxis);
 
-  let h = histogram()
-    .domain(x.domain())
-    .value((d) => {
-      return d.Year_of_Release;
-    });
+  let h = histogram().value((d) => {
+    return d.Year_of_Release;
+  });
 
   let bins = h(incomingData);
   console.log(bins);
 
   let y = scaleLinear()
-    .domain([max(bins, (d) => d.length), 0])
+    .domain([max(bins, (d) => d.length) + 1000, 0])
     .range([0, innerHeight]);
 
   let yAxis = axisLeft(y);
@@ -64,9 +62,14 @@ function render(incomingData) {
     .data(bins)
     .enter()
     .append("rect")
-    .attr("y", (d) => y(d.length))
-    .attr("x", (d) => x(d.x0))
-    .attr("height", (d) => innerHeight - margin.bottom - y(d.length))
+    .attr("x", (d) => x(d.x0) + 2)
+    .attr("y", (d) => y(d.length) - margin.bottom)
+    .attr("height", (d) => {
+      return innerHeight - y(d.length);
+    })
+    // .attr("transform", (d) => {
+    //   return `translate(${0}, ${y(d.length) - margin.bottom})`;
+    // })
     .attr("width", 10)
     .style("fill", "#e63946");
 }
